@@ -30,7 +30,7 @@ public class TaskController {
     private TaskService taskService;
     @Autowired
     private DocToPdfService dtpService;
-    
+
     @GetMapping("/")
     public String getAll(Model model) {
         List<Task> taskList = taskService.getAll();
@@ -62,15 +62,9 @@ public class TaskController {
         return "redirect:/";
     }
 
-//    @PostMapping("/pdf")
-//    public String toPdf() {
-//        pDFGenerator.generatePdfReport();
-//        return "redirect:/";
-//    }
-        @PostMapping("/doc-to-pdf")
+    @PostMapping("/doc-to-pdf")
     public String docToPdf() throws IOException, Exception {
-        dtpService.convert("", "");
+        dtpService.convert("./test.xlsx", "./toPDF.pdf");
         return "redirect:/";
     }
 }
-

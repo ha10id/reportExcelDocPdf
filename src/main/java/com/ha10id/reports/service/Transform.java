@@ -32,7 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Transform {
 
     private int lastColumn = 0;
-    private HashMap<Integer, HSSFCellStyle> styleMap = new HashMap();
+    private final HashMap<Integer, HSSFCellStyle> styleMap = new HashMap();
 
     public void transformXSSF(XSSFWorkbook workbookOld, HSSFWorkbook workbookNew) {
         HSSFSheet sheetNew;
@@ -47,7 +47,6 @@ public class Transform {
             this.transform(workbookOld, workbookNew, sheetOld, sheetNew);
         }
     }
-    
 
     private void transform(XSSFWorkbook workbookOld, HSSFWorkbook workbookNew,
             XSSFSheet sheetOld, HSSFSheet sheetNew) {
@@ -143,7 +142,7 @@ public class Transform {
                 cellNew.setCellValue(cellOld.getStringCellValue());
                 break;
             default:
-                System.out.println("transform: Unbekannter Zellentyp "
+                System.out.println("transform: Неизвестный тип ячейки "
                         + cellOld.getCellType());
         }
     }
