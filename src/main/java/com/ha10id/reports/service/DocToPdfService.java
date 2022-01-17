@@ -42,7 +42,7 @@ public class DocToPdfService {
     private static final String EXCEL_XLS = "xls";
     private static final String EXCEL_XLSX = "xlsx";
 
-    public Boolean convert(String src, String dst) throws IOException {
+    public void convert(String src, String dst) {
         try {
             ByteArrayOutputStream pdfOutStream = new ByteArrayOutputStream();
             InputStream inputStream = new FileInputStream(src);
@@ -89,9 +89,7 @@ public class DocToPdfService {
             }
         } catch (IOException | IllegalArgumentException | ParserConfigurationException | TransformerException e) {
             System.out.println(e.getMessage());
-            return false;
             // log exception details and throw custom exception
         }
-        return true;
     }
 }
