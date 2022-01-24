@@ -57,11 +57,9 @@
     </tr>
     </#list>
 </table>
-<form action="/pdf" method="post">
-    <button type="submit">send to pdf</button>
-</form>
-<form action="/doc-to-pdf" method="post">
-    <button type="submit">doc to pdf</button>
+
+<form action="/xls-to-pdf" method="post">
+    <button type="submit">convert xlsx to doc & pdf</button>
 </form>
 </body>
 </html>

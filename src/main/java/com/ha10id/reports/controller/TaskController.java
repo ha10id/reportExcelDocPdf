@@ -7,17 +7,13 @@ package com.ha10id.reports.controller;
 import com.ha10id.reports.entity.Task;
 import com.ha10id.reports.service.DocToPdfService;
 import com.ha10id.reports.service.TaskService;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -62,9 +58,9 @@ public class TaskController {
         return "redirect:/";
     }
 
-    @PostMapping("/doc-to-pdf")
-    public String docToPdf() throws IOException, Exception {
-        dtpService.convert("./test.xlsx", "./toPDF.pdf");
+    @PostMapping("/xls-to-pdf")
+    public String docToPdf() throws Exception {
+        dtpService.convert("./test.xlsx", "./toPDF");
         return "redirect:/";
     }
 }
