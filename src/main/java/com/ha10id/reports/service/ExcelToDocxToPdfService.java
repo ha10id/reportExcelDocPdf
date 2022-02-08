@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.ha10id.reports.service;
 
 import com.itextpdf.html2pdf.ConverterProperties;
@@ -23,35 +18,54 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import org.docx4j.jaxb.Context;
+import org.docx4j.openpackaging.contenttype.ContentType;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.PartName;
+import org.docx4j.openpackaging.parts.WordprocessingML.AltChunkType;
+import org.docx4j.openpackaging.parts.WordprocessingML.AlternativeFormatInputPart;
+import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
+import org.docx4j.relationships.Relationship;
+import org.docx4j.wml.CTAltChunk;
 
 /**
  * @author ha10id
  */
 @Service
-public class DocToPdfService {
+public class ExcelToDocxToPdfService {
 
     private static final String EXCEL_XLS = "xls";
     private static final String EXCEL_XLSX = "xlsx";
+    private static final String PDF_FILE = "pdf";
+    private static final String DOC_FILE = "docx";
 
-    private static void writeHTMLData(InputStream inputStream, String outputFilePath) throws IOException {
+    private static void writeHTMLData(InputStream inputStream, String outputFilePath) throws IOException, InvalidFormatException, Docx4JException, JAXBException {
         String inputData = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(outputFilePath)), StandardCharsets.UTF_8));
-            writer.write(inputData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (writer != null)
-                    writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+
+        NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
+        wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
+        ndp.unmarshalDefaultNumbering();
+        AlternativeFormatInputPart inputPart = new AlternativeFormatInputPart(AltChunkType.Xhtml);
+        inputPart.setContentType(new ContentType("text/html"));
+        inputPart.setBinaryData(inputData.getBytes());
+        Relationship altChunkRel = wordMLPackage.getMainDocumentPart().addTargetPart(inputPart);
+// .. the bit in document body
+        CTAltChunk ac = Context.getWmlObjectFactory().createCTAltChunk();
+        ac.setId(altChunkRel.getId());
+        wordMLPackage.getMainDocumentPart().addObject(ac);
+// .. content type
+        wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
+//Saving the Document
+        wordMLPackage.save(new java.io.File(outputFilePath));
     }
 
-    public Boolean convert(String src, String dst) throws IOException {
+    public Boolean convert(String src, String dst) throws IOException, Exception {
         byte[] pdfBytes = null;
         try {
             ByteArrayOutputStream pdfOutStream = new ByteArrayOutputStream();
@@ -74,7 +88,7 @@ public class DocToPdfService {
             excelToHtmlConverter.processWorkbook(excelBook);
 
             htmlDocument = excelToHtmlConverter.getDocument();
-            try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
+            try ( ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
                 //convert xls stream to html - w3 document
                 DOMSource domSource = new DOMSource(htmlDocument);
                 StreamResult streamResult = new StreamResult(outStream);
@@ -92,16 +106,16 @@ public class DocToPdfService {
                 HtmlConverter.convertToPdf(htmlInputStream, pdfOutStream, converterProperties);
                 //convert html inputstream to doc out stream
                 htmlInputStream.reset();
-                writeHTMLData(htmlInputStream, String.format("%s.doc", dst));
+                writeHTMLData(htmlInputStream, String.format("%s.docx", dst));
 
                 pdfBytes = pdfOutStream.toByteArray();
                 System.out.println(Arrays.toString(pdfBytes));
                 try ( //write to physical pdf file
-                      OutputStream out = new FileOutputStream(String.format("%s.pdf", dst))) {
+                         OutputStream out = new FileOutputStream(String.format("%s.pdf", dst))) {
                     out.write(pdfBytes);
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException | IllegalArgumentException | ParserConfigurationException | TransformerException e) {
             System.out.println(e);
             // log exception details and throw custom exception
         }

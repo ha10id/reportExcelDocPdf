@@ -21,6 +21,11 @@
     </properties>
     <repositories>
         <repository>
+            <id>AsposeJavaAPI</id>
+            <name>Aspose Java API</name>
+            <url>https://repository.aspose.com/repo/</url>
+        </repository>
+        <repository>
             <id>jaspersoft-third-party</id>
             <url>http://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
         </repository>
@@ -64,14 +69,26 @@
             <version>4.1.1</version>
         </dependency>
         <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-cells</artifactId>
+            <version>21.3</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>4.1.2</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.docx4j</groupId>
             <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
             <version>11.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j</artifactId>
+            <version>6.1.2</version>
         </dependency>
     </dependencies>
 

@@ -5,7 +5,7 @@
 package com.ha10id.reports.controller;
 
 import com.ha10id.reports.entity.Task;
-import com.ha10id.reports.service.DocToPdfService;
+import com.ha10id.reports.service.ExcelToDocxToPdfService;
 import com.ha10id.reports.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,7 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
     @Autowired
-    private DocToPdfService dtpService;
+    private ExcelToDocxToPdfService dtpService;
 
     @GetMapping("/")
     public String getAll(Model model) {
