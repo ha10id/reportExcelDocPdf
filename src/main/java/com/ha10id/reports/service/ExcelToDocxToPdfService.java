@@ -1,6 +1,5 @@
 package com.ha10id.reports.service;
 
-import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -22,16 +21,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.docx4j.jaxb.Context;
+import org.docx4j.model.structure.PageSizePaper;
 import org.docx4j.openpackaging.contenttype.ContentType;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
@@ -55,7 +52,7 @@ public class ExcelToDocxToPdfService {
 
     private static void convertHtmlToDocx(InputStream inputStream, String outputFilePath) throws IOException, InvalidFormatException, Docx4JException, JAXBException {
         String inputData = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage(PageSizePaper.A4, true);
 
         NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
         wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
@@ -74,7 +71,7 @@ public class ExcelToDocxToPdfService {
         wordMLPackage.save(new java.io.File(outputFilePath));
     }
 
-    public Boolean convertDocxToPdf(String src, String dst) throws FileNotFoundException, IOException {
+    private Boolean convertDocxToPdf(String src, String dst) throws FileNotFoundException, IOException {
         InputStream inputStream = new FileInputStream(src);
         OutputStream out;
         try ( XWPFDocument document = new XWPFDocument(inputStream)) {
@@ -126,22 +123,17 @@ public class ExcelToDocxToPdfService {
     }
 
     public Boolean convert(String src, String dst) throws IOException, Exception {
-//        byte[] pdfBytes = null;
-        ByteArrayOutputStream pdfOutStream = new ByteArrayOutputStream();
-
         InputStream htmlInputStream = new ByteArrayInputStream(convertXlsxToHtml(src).toByteArray());
-        //convert html inputstream to pdf out stream
-        //ConverterProperties converterProperties = new ConverterProperties();
-        //HtmlConverter.convertToPdf(htmlInputStream, pdfOutStream, converterProperties);
-        //convert html inputstream to doc out stream
-//        convertHtmlToDocx(htmlInputStream, String.format("%s.docx", dst));
-//        htmlInputStream.reset();
-//        pdfBytes = pdfOutStream.toByteArray();
-//        System.out.println(Arrays.toString(pdfBytes));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(String.format("%s.pdf", dst)));
-        pdfDoc.setDefaultPageSize(new PageSize(1700, 842));
+        // test file output format
+        if (dst.endsWith(DOC_FILE)) {  // out DOCX
+//        convert html inputstream to doc out stream
+            convertHtmlToDocx(htmlInputStream, dst);
+        } else if (dst.endsWith(PDF_FILE)) {  // out PDF
+            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(dst));
+            pdfDoc.setDefaultPageSize(new PageSize(1500, 842));
 //        write to physical pdf file
-        HtmlConverter.convertToPdf(htmlInputStream, pdfDoc);
+            HtmlConverter.convertToPdf(htmlInputStream, pdfDoc);
+        }
         return null;
     }
 }
