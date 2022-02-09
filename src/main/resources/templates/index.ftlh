@@ -61,5 +61,8 @@
 <form action="/xls-to-pdf" method="post">
     <button type="submit">convert xlsx to doc & pdf</button>
 </form>
+<form action="/docx-to-pdf" method="post">
+    <button type="submit">convert docx to pdf & pdf</button>
+</form>
 </body>
 </html>

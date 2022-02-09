@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -69,7 +70,14 @@ public class Transform {
         sheetNew.setRowSumsBelow(sheetNew.getRowSumsBelow());
         sheetNew.setRowSumsRight(sheetNew.getRowSumsRight());
         sheetNew.setVerticallyCenter(sheetOld.getVerticallyCenter());
-
+        
+        // paper setting
+//        PrintSetup printSetup = sheetNew.getPrintSetup();
+//        printSetup.setLandscape(true);
+//        printSetup.setPaperSize(PrintSetup.A3_PAPERSIZE);
+//        sheetNew.setPrintGridlines(true);
+//        System.out.println("Print config");
+        
         HSSFRow rowNew;
         for (Row row : sheetOld) {
             rowNew = sheetNew.createRow(row.getRowNum());

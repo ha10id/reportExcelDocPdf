@@ -59,8 +59,14 @@ public class TaskController {
     }
 
     @PostMapping("/xls-to-pdf")
-    public String docToPdf() throws Exception {
+    public String xlsxToPdf() throws Exception {
         dtpService.convert("./test.xlsx", "./toPDF");
+        return "redirect:/";
+    }
+
+    @PostMapping("/docx-to-pdf")
+    public String docxToPdf() throws Exception {
+        dtpService.convertDocxToPdf("./test.docx", "./toPDF");
         return "redirect:/";
     }
 }
